@@ -141,13 +141,10 @@ int initializeRBTree(struct RBTree **tree, int (*compare)(void *, void *)) {
     return 0;
 }
 
-
-int tree_minimum(struct RBTree* tree, struct RBNode** rnode) {
-    if (!tree || !tree->root || tree->root == tree->TNULL) return -1;
-    struct RBNode* node = tree->root;
+struct RBNode* tree_minimum(struct RBTree* tree, struct RBNode* node) {
+    if (!tree || node == tree->TNULL) return NULL;
     while (node->left != tree->TNULL) node = node->left;
-    *rnode = node;
-    return 0;
+    return node;
 }
 
 static int transplant(struct RBTree *tree, struct RBNode *u, struct RBNode *v) {
@@ -219,7 +216,7 @@ int remove_fixup(struct RBTree *tree, struct RBNode *x) {
     return 0;
 }
 
-int remove(struct RBTree *tree, struct RBNode *z) {
+int _remove(struct RBTree *tree, struct RBNode *z) {
     if (!tree || !z || z == tree->TNULL) return -1;
 
     struct RBNode *y = z;
@@ -265,11 +262,10 @@ int insertRBTree(struct RBTree* tree, void* data) {
 int removeminRBTree(struct RBTree *tree, void **data) {
     if (!tree || !data) return -1;
 
-    struct RBNode* min_node;
-    if (tree_minimum(tree, &min_node) < 0) return -1;
+    struct RBNode* min_node = tree_minimum(tree, tree->root);
     if (!min_node || min_node == tree->TNULL) return -1;
 
     *data = min_node->data;
 
-    return remove(tree, min_node);
+    return _remove(tree, min_node);
 }
