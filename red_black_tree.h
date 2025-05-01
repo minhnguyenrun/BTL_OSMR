@@ -21,5 +21,6 @@ struct RBTree {
 int initializeRBTree(struct RBTree **tree, int (*compare)(void *, void *));
 int insertRBTree(struct RBTree *tree, void *data);
 int removeminRBTree(struct RBTree *tree, void **data);
+int removeRBTree(struct RBTree* tree, int (*findFunc)(void*), void** data);
 
 #endif // RED_BLACK_TREE_H

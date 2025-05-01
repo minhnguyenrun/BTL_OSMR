@@ -1,8 +1,8 @@
 #include "red_black_tree.h"
 
-int createRBNode(struct RBTree *tree, void *data, struct RBNode **out_node) {
+int createRBNode(struct RBTree* tree, void* data, struct RBNode** out_node) {
     if (!tree || !out_node) return -1;
-    struct RBNode *node = (struct RBNode *)malloc(sizeof(struct RBNode));
+    struct RBNode* node = (struct RBNode*)malloc(sizeof(struct RBNode));
     if (!node) return -1;
     node->data = data;
     node->color = RED;
@@ -13,9 +13,9 @@ int createRBNode(struct RBTree *tree, void *data, struct RBNode **out_node) {
     return 0;
 }
 
-int leftRotate(struct RBTree *tree, struct RBNode *x) {
+int leftRotate(struct RBTree* tree, struct RBNode* x) {
     if (!tree || !x || x->right == tree->TNULL) return -1;
-    struct RBNode *y = x->right;
+    struct RBNode* y = x->right;
     x->right = y->left;
     if (y->left != tree->TNULL)
         y->left->parent = x;
@@ -31,9 +31,9 @@ int leftRotate(struct RBTree *tree, struct RBNode *x) {
     return 0;
 }
 
-int rightRotate(struct RBTree *tree, struct RBNode *x) {
+int rightRotate(struct RBTree* tree, struct RBNode* x) {
     if (!tree || !x || x->left == tree->TNULL) return -1;
-    struct RBNode *y = x->left;
+    struct RBNode* y = x->left;
     x->left = y->right;
     if (y->right != tree->TNULL)
         y->right->parent = x;
@@ -49,18 +49,19 @@ int rightRotate(struct RBTree *tree, struct RBNode *x) {
     return 0;
 }
 
-int insertFixup(struct RBTree *tree, struct RBNode *z) {
+int insertFixup(struct RBTree* tree, struct RBNode* z) {
     if (!tree || !z) return -1;
 
     while (z->parent && z->parent->color == RED) {
         if (z->parent == z->parent->parent->left) {
-            struct RBNode *y = z->parent->parent->right;
+            struct RBNode* y = z->parent->parent->right;
             if (y && y->color == RED) {
                 z->parent->color = BLACK;
                 y->color = BLACK;
                 z->parent->parent->color = RED;
                 z = z->parent->parent;
-            } else {
+            }
+            else {
                 if (z == z->parent->right) {
                     z = z->parent;
                     leftRotate(tree, z);
@@ -69,14 +70,16 @@ int insertFixup(struct RBTree *tree, struct RBNode *z) {
                 z->parent->parent->color = RED;
                 rightRotate(tree, z->parent->parent);
             }
-        } else {
-            struct RBNode *y = z->parent->parent->left;
+        }
+        else {
+            struct RBNode* y = z->parent->parent->left;
             if (y && y->color == RED) {
                 z->parent->color = BLACK;
                 y->color = BLACK;
                 z->parent->parent->color = RED;
                 z = z->parent->parent;
-            } else {
+            }
+            else {
                 if (z == z->parent->left) {
                     z = z->parent;
                     rightRotate(tree, z);
@@ -91,14 +94,14 @@ int insertFixup(struct RBTree *tree, struct RBNode *z) {
     return 0;
 }
 
-int insert(struct RBTree *tree, void *data) {
+int insert(struct RBTree* tree, void* data) {
     if (!tree || !data) return -1;
 
-    struct RBNode *z = NULL;
+    struct RBNode* z = NULL;
     if (createRBNode(tree, data, &z) != 0) return -1;
 
-    struct RBNode *y = NULL;
-    struct RBNode *x = tree->root;
+    struct RBNode* y = NULL;
+    struct RBNode* x = tree->root;
 
     while (x != tree->TNULL) {
         y = x;
@@ -119,13 +122,13 @@ int insert(struct RBTree *tree, void *data) {
     return insertFixup(tree, z);
 }
 
-int initializeRBTree(struct RBTree **tree, int (*compare)(void *, void *)) {
+int initializeRBTree(struct RBTree** tree, int (*compare)(void*, void*)) {
     if (!tree || !compare) return -1;
 
-    *tree = (struct RBTree *)malloc(sizeof(struct RBTree));
+    *tree = (struct RBTree*)malloc(sizeof(struct RBTree));
     if (!*tree) return -1;
 
-    (*tree)->TNULL = (struct RBNode *)malloc(sizeof(struct RBNode));
+    (*tree)->TNULL = (struct RBNode*)malloc(sizeof(struct RBNode));
     if (!(*tree)->TNULL) {
         free(*tree);
         return -1;
@@ -147,23 +150,25 @@ struct RBNode* tree_minimum(struct RBTree* tree, struct RBNode* node) {
     return node;
 }
 
-static int transplant(struct RBTree *tree, struct RBNode *u, struct RBNode *v) {
+static int transplant(struct RBTree* tree, struct RBNode* u, struct RBNode* v) {
     if (!tree || !u) return -1;
     if (u->parent == NULL) {
         tree->root = v;
-    } else if (u == u->parent->left) {
+    }
+    else if (u == u->parent->left) {
         u->parent->left = v;
-    } else {
+    }
+    else {
         u->parent->right = v;
     }
     if (v) v->parent = u->parent;
     return 0;
 }
 
-int remove_fixup(struct RBTree *tree, struct RBNode *x) {
+int remove_fixup(struct RBTree* tree, struct RBNode* x) {
     while (x != tree->root && x->color == BLACK) {
         if (x == x->parent->left) {
-            struct RBNode *w = x->parent->right;
+            struct RBNode* w = x->parent->right;
             if (w->color == RED) {
                 w->color = BLACK;
                 x->parent->color = RED;
@@ -173,7 +178,8 @@ int remove_fixup(struct RBTree *tree, struct RBNode *x) {
             if (w->left->color == BLACK && w->right->color == BLACK) {
                 w->color = RED;
                 x = x->parent;
-            } else {
+            }
+            else {
                 if (w->right->color == BLACK) {
                     w->left->color = BLACK;
                     w->color = RED;
@@ -186,8 +192,9 @@ int remove_fixup(struct RBTree *tree, struct RBNode *x) {
                 leftRotate(tree, x->parent);
                 x = tree->root;
             }
-        } else {
-            struct RBNode *w = x->parent->left;
+        }
+        else {
+            struct RBNode* w = x->parent->left;
             if (w->color == RED) {
                 w->color = BLACK;
                 x->parent->color = RED;
@@ -197,7 +204,8 @@ int remove_fixup(struct RBTree *tree, struct RBNode *x) {
             if (w->right->color == BLACK && w->left->color == BLACK) {
                 w->color = RED;
                 x = x->parent;
-            } else {
+            }
+            else {
                 if (w->left->color == BLACK) {
                     w->right->color = BLACK;
                     w->color = RED;
@@ -216,26 +224,29 @@ int remove_fixup(struct RBTree *tree, struct RBNode *x) {
     return 0;
 }
 
-int _remove(struct RBTree *tree, struct RBNode *z) {
+int _remove(struct RBTree* tree, struct RBNode* z) {
     if (!tree || !z || z == tree->TNULL) return -1;
 
-    struct RBNode *y = z;
-    struct RBNode *x = NULL;
+    struct RBNode* y = z;
+    struct RBNode* x = NULL;
     Color y_original_color = y->color;
 
     if (z->left == tree->TNULL) {
         x = z->right;
         transplant(tree, z, z->right);
-    } else if (z->right == tree->TNULL) {
+    }
+    else if (z->right == tree->TNULL) {
         x = z->left;
         transplant(tree, z, z->left);
-    } else {
+    }
+    else {
         y = tree_minimum(tree, z->right);
         y_original_color = y->color;
         x = y->right;
         if (y->parent == z) {
             if (x) x->parent = y;
-        } else {
+        }
+        else {
             transplant(tree, y, y->right);
             y->right = z->right;
             if (y->right) y->right->parent = y;
@@ -259,7 +270,7 @@ int insertRBTree(struct RBTree* tree, void* data) {
     else return 0;
 }
 
-int removeminRBTree(struct RBTree *tree, void **data) {
+int removeminRBTree(struct RBTree* tree, void** data) {
     if (!tree || !data) return -1;
 
     struct RBNode* min_node = tree_minimum(tree, tree->root);
@@ -268,4 +279,39 @@ int removeminRBTree(struct RBTree *tree, void **data) {
     *data = min_node->data;
 
     return _remove(tree, min_node);
+}
+
+int remove_by_search(struct RBTree* tree, int (*findFunc)(void*), void** data) {
+    if (!tree || !findFunc || !data) return -1;
+
+    struct RBNode* stack[100];
+    int top = -1;
+    struct RBNode* current = tree->root;
+
+    if (current == tree->TNULL) return -1;
+
+    stack[++top] = current;
+
+    while (top >= 0) {
+        current = stack[top--];
+
+        if (current == tree->TNULL) continue;
+
+        if (findFunc(current->data)) {
+            *data = current->data;
+            return _remove(tree, current);
+        }
+
+        if (current->right != tree->TNULL)
+            stack[++top] = current->right;
+        if (current->left != tree->TNULL)
+            stack[++top] = current->left;
+    }
+
+    return -1;
+}
+
+int removeRBTree(struct RBTree* tree, int (*findFunc)(void*), void** data) {
+    if (remove_by_search(tree, findFunc, data) < 0) return -1;
+    else return 0;
 }
